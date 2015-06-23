@@ -1,6 +1,7 @@
 package com.spbstu.java;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -17,6 +18,8 @@ import javax.swing.JTextArea;
 import java.awt.Insets;
 
 import javax.swing.border.LineBorder;
+import javax.swing.plaf.ProgressBarUI;
+import javax.swing.plaf.metal.MetalProgressBarUI;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -25,6 +28,8 @@ import java.util.Collection;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import javax.swing.JProgressBar;
 
 // Заправочная станция. Заправочная станция с самообслуживанием имеет некоторое число насосов для заправки автомобилей покупателей топливом.
 // Действует следующая система: покупатели сначала платят кассиру за топливо; кассир активирует насос чтобы доставить топливо. 
@@ -35,16 +40,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class Main {
 
 	private static JTextArea cntrlTextArea;
-	private static JSlider gas1_slider;
-	private static JSpinner gas1_spinner;
 	private static JTextArea gas1_textArea;
-	private static JSlider gas2_slider;
-	private static JSpinner gas2_spinner;
 	private static JTextArea gas2_textArea;
 	private static JPanel panel_3;
-	private static JSlider gas3_slider;
-	private static JSpinner gas3_spinner;
 	private static JTextArea gas3_textArea;
+	private static JProgressBar gas1_pb;
+	private static JProgressBar gas2_pb;
+	private static JProgressBar gas3_pb;
 
 	public static void main(String[] args) {
 
@@ -63,7 +65,8 @@ public class Main {
 					public void drawController(Collection<?> _cars) {
 						cntrlTextArea.setText("");
 						for (Object o : _cars) {
-							cntrlTextArea.setText(cntrlTextArea.getText() + o.toString() + '\n');
+							cntrlTextArea.setText(cntrlTextArea.getText()
+									+ o.toString() + '\n');
 						}
 					}
 
@@ -72,28 +75,31 @@ public class Main {
 							Integer _fuelLvl, String _name) {
 						switch (_name) {
 						case "Gas1":
+							gas1_pb.setValue(_fuelLvl);
+							gas1_pb.setString(new Integer(_fuelLvl).toString());
 							gas1_textArea.setText("");
 							for (Object o : _cars) {
-								gas1_textArea.setText(gas1_textArea.getText() + o.toString() + '\n');
+								gas1_textArea.setText(gas1_textArea.getText()
+										+ o.toString() + '\n');
 							}
-							gas1_slider.setValue(_fuelLvl);
-							gas1_spinner.setValue(_fuelLvl);
 							break;
 						case "Gas2":
+							gas2_pb.setValue(_fuelLvl);
+							gas2_pb.setString(new Integer(_fuelLvl).toString());
 							gas2_textArea.setText("");
 							for (Object o : _cars) {
-								gas2_textArea.setText(gas2_textArea.getText() + o.toString() + '\n');
+								gas2_textArea.setText(gas2_textArea.getText()
+										+ o.toString() + '\n');
 							}
-							gas2_slider.setValue(_fuelLvl);
-							gas2_spinner.setValue(_fuelLvl);
 							break;
 						case "Gas3":
+							gas3_pb.setValue(_fuelLvl);
+							gas3_pb.setString(new Integer(_fuelLvl).toString());
 							gas3_textArea.setText("");
 							for (Object o : _cars) {
-								gas3_textArea.setText(gas3_textArea.getText() + o.toString() + '\n');
+								gas3_textArea.setText(gas3_textArea.getText()
+										+ o.toString() + '\n');
 							}
-							gas3_slider.setValue(_fuelLvl);
-							gas3_spinner.setValue(_fuelLvl);
 							break;
 						default:
 							break;
@@ -160,6 +166,12 @@ public class Main {
 		panel.setLayout(gbl_panel);
 
 		JButton btnNewButton = new JButton("Generate car");
+		btnNewButton.setEnabled(false);
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gasStation.genSingleCar();
+			}
+		});
 		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
 		gbc_btnNewButton.fill = GridBagConstraints.BOTH;
 		gbc_btnNewButton.insets = new Insets(0, 0, 5, 0);
@@ -184,33 +196,36 @@ public class Main {
 		frame.getContentPane().add(panel_1, gbc_panel_1);
 		GridBagLayout gbl_panel_1 = new GridBagLayout();
 		gbl_panel_1.columnWidths = new int[] { 0, 0 };
-		gbl_panel_1.rowHeights = new int[] { 0, 0, 0, 0 };
+		gbl_panel_1.rowHeights = new int[] { 300, 0, 0 };
 		gbl_panel_1.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-		gbl_panel_1.rowWeights = new double[] { 0.0, 0.0, 1.0, Double.MIN_VALUE };
+		gbl_panel_1.rowWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
 		panel_1.setLayout(gbl_panel_1);
 
-		gas1_slider = new JSlider();
-		gas1_slider.setValue(0);
-		gas1_slider.setOrientation(SwingConstants.VERTICAL);
-		GridBagConstraints gbc_gas1_slider = new GridBagConstraints();
-		gbc_gas1_slider.insets = new Insets(0, 0, 5, 0);
-		gbc_gas1_slider.gridx = 0;
-		gbc_gas1_slider.gridy = 0;
-		panel_1.add(gas1_slider, gbc_gas1_slider);
-
-		gas1_spinner = new JSpinner();
-		GridBagConstraints gbc_gas1_spinner = new GridBagConstraints();
-		gbc_gas1_spinner.fill = GridBagConstraints.HORIZONTAL;
-		gbc_gas1_spinner.insets = new Insets(0, 0, 5, 0);
-		gbc_gas1_spinner.gridx = 0;
-		gbc_gas1_spinner.gridy = 1;
-		panel_1.add(gas1_spinner, gbc_gas1_spinner);
+		gas1_pb = new JProgressBar() {
+			@Override
+			public int getOrientation() {
+				for (StackTraceElement elem : new Throwable().getStackTrace()) {
+					if (elem.getMethodName().equals("paintText")
+							|| (elem.getMethodName().equals("paintString"))) {
+						return JProgressBar.HORIZONTAL;
+					}
+				}
+				return JProgressBar.VERTICAL;
+			}
+		};
+		gas1_pb.setOrientation(SwingConstants.VERTICAL);
+		GridBagConstraints gbc_gas1_pb = new GridBagConstraints();
+		gbc_gas1_pb.fill = GridBagConstraints.BOTH;
+		gbc_gas1_pb.insets = new Insets(0, 0, 5, 0);
+		gbc_gas1_pb.gridx = 0;
+		gbc_gas1_pb.gridy = 0;
+		panel_1.add(gas1_pb, gbc_gas1_pb);
 
 		gas1_textArea = new JTextArea();
 		GridBagConstraints gbc_gas1_textArea = new GridBagConstraints();
 		gbc_gas1_textArea.fill = GridBagConstraints.BOTH;
 		gbc_gas1_textArea.gridx = 0;
-		gbc_gas1_textArea.gridy = 2;
+		gbc_gas1_textArea.gridy = 1;
 		panel_1.add(gas1_textArea, gbc_gas1_textArea);
 
 		JPanel panel_2 = new JPanel();
@@ -223,33 +238,36 @@ public class Main {
 		frame.getContentPane().add(panel_2, gbc_panel_2);
 		GridBagLayout gbl_panel_2 = new GridBagLayout();
 		gbl_panel_2.columnWidths = new int[] { 0, 0 };
-		gbl_panel_2.rowHeights = new int[] { 0, 0, 0, 0 };
+		gbl_panel_2.rowHeights = new int[] { 300, 0, 0 };
 		gbl_panel_2.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-		gbl_panel_2.rowWeights = new double[] { 0.0, 0.0, 1.0, Double.MIN_VALUE };
+		gbl_panel_2.rowWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
 		panel_2.setLayout(gbl_panel_2);
 
-		gas2_slider = new JSlider();
-		gas2_slider.setValue(0);
-		gas2_slider.setOrientation(SwingConstants.VERTICAL);
-		GridBagConstraints gbc_gas2_slider = new GridBagConstraints();
-		gbc_gas2_slider.insets = new Insets(0, 0, 5, 0);
-		gbc_gas2_slider.gridx = 0;
-		gbc_gas2_slider.gridy = 0;
-		panel_2.add(gas2_slider, gbc_gas2_slider);
-
-		gas2_spinner = new JSpinner();
-		GridBagConstraints gbc_gas2_spinner = new GridBagConstraints();
-		gbc_gas2_spinner.fill = GridBagConstraints.HORIZONTAL;
-		gbc_gas2_spinner.insets = new Insets(0, 0, 5, 0);
-		gbc_gas2_spinner.gridx = 0;
-		gbc_gas2_spinner.gridy = 1;
-		panel_2.add(gas2_spinner, gbc_gas2_spinner);
+		gas2_pb = new JProgressBar() {
+			@Override
+			public int getOrientation() {
+				for (StackTraceElement elem : new Throwable().getStackTrace()) {
+					if (elem.getMethodName().equals("paintText")
+							|| (elem.getMethodName().equals("paintString"))) {
+						return JProgressBar.HORIZONTAL;
+					}
+				}
+				return JProgressBar.VERTICAL;
+			}
+		};
+		gas2_pb.setOrientation(SwingConstants.VERTICAL);
+		GridBagConstraints gbc_gas2_pb = new GridBagConstraints();
+		gbc_gas2_pb.fill = GridBagConstraints.BOTH;
+		gbc_gas2_pb.insets = new Insets(0, 0, 5, 0);
+		gbc_gas2_pb.gridx = 0;
+		gbc_gas2_pb.gridy = 0;
+		panel_2.add(gas2_pb, gbc_gas2_pb);
 
 		gas2_textArea = new JTextArea();
 		GridBagConstraints gbc_gas2_textArea = new GridBagConstraints();
 		gbc_gas2_textArea.fill = GridBagConstraints.BOTH;
 		gbc_gas2_textArea.gridx = 0;
-		gbc_gas2_textArea.gridy = 2;
+		gbc_gas2_textArea.gridy = 1;
 		panel_2.add(gas2_textArea, gbc_gas2_textArea);
 
 		panel_3 = new JPanel();
@@ -261,34 +279,73 @@ public class Main {
 		frame.getContentPane().add(panel_3, gbc_panel_3);
 		GridBagLayout gbl_panel_3 = new GridBagLayout();
 		gbl_panel_3.columnWidths = new int[] { 0, 0 };
-		gbl_panel_3.rowHeights = new int[] { 0, 0, 0, 0 };
+		gbl_panel_3.rowHeights = new int[] { 300, 0, 0 };
 		gbl_panel_3.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
-		gbl_panel_3.rowWeights = new double[] { 0.0, 0.0, 1.0, Double.MIN_VALUE };
+		gbl_panel_3.rowWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
 		panel_3.setLayout(gbl_panel_3);
 
-		gas3_slider = new JSlider();
-		gas3_slider.setValue(0);
-		gas3_slider.setOrientation(SwingConstants.VERTICAL);
-		GridBagConstraints gbc_gas3_slider = new GridBagConstraints();
-		gbc_gas3_slider.insets = new Insets(0, 0, 5, 0);
-		gbc_gas3_slider.gridx = 0;
-		gbc_gas3_slider.gridy = 0;
-		panel_3.add(gas3_slider, gbc_gas3_slider);
-
-		gas3_spinner = new JSpinner();
-		GridBagConstraints gbc_gas3_spinner = new GridBagConstraints();
-		gbc_gas3_spinner.fill = GridBagConstraints.HORIZONTAL;
-		gbc_gas3_spinner.insets = new Insets(0, 0, 5, 0);
-		gbc_gas3_spinner.gridx = 0;
-		gbc_gas3_spinner.gridy = 1;
-		panel_3.add(gas3_spinner, gbc_gas3_spinner);
+		gas3_pb = new JProgressBar() {
+			@Override
+			public int getOrientation() {
+				for (StackTraceElement elem : new Throwable().getStackTrace()) {
+					if (elem.getMethodName().equals("paintText")
+							|| (elem.getMethodName().equals("paintString"))) {
+						return JProgressBar.HORIZONTAL;
+					}
+				}
+				return JProgressBar.VERTICAL;
+			}
+		};
+		gas3_pb.setOrientation(SwingConstants.VERTICAL);
+		GridBagConstraints gbc_gas3_pb = new GridBagConstraints();
+		gbc_gas3_pb.fill = GridBagConstraints.BOTH;
+		gbc_gas3_pb.insets = new Insets(0, 0, 5, 0);
+		gbc_gas3_pb.gridx = 0;
+		gbc_gas3_pb.gridy = 0;
+		panel_3.add(gas3_pb, gbc_gas3_pb);
 
 		gas3_textArea = new JTextArea();
 		GridBagConstraints gbc_gas3_textArea = new GridBagConstraints();
 		gbc_gas3_textArea.fill = GridBagConstraints.BOTH;
 		gbc_gas3_textArea.gridx = 0;
-		gbc_gas3_textArea.gridy = 2;
+		gbc_gas3_textArea.gridy = 1;
 		panel_3.add(gas3_textArea, gbc_gas3_textArea);
+
+		gas1_pb.setStringPainted(true);
+		gas2_pb.setStringPainted(true);
+		gas3_pb.setStringPainted(true);
+
+		
+		gas1_pb.setUI(genUiPb());
+		gas2_pb.setUI(genUiPb());
+		gas3_pb.setUI(genUiPb());
+		
+		cntrlTextArea.setEditable(false);
+		gas3_textArea.setEditable(false);
+		gas2_textArea.setEditable(false);
+		gas1_textArea.setEditable(false);
+
 		frame.setVisible(true);
+	}
+	
+	public static ProgressBarUI genUiPb(){
+		return new MetalProgressBarUI(){
+			  /**
+			   * The "selectionForeground" is the color of the text when it is painted
+			   * over a filled area of the progress bar.
+			   */
+			  @Override
+			  protected Color getSelectionForeground() {
+				  return Color.BLACK;
+			  }
+			  /**
+			   * The "selectionBackground" is the color of the text when it is painted
+			   * over an unfilled area of the progress bar.
+			   */
+			  @Override
+			  protected Color getSelectionBackground(){
+				  return Color.BLACK;
+			  }
+		};
 	}
 }

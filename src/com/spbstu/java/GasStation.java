@@ -4,17 +4,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 
 public class GasStation implements Runnable {
 
 	private static final int CAR_GEN_FREQ = 500;
+	private static final Boolean isAuto = true;
 	Controller _cntrl;
 	ExecutorService _servise;
 	List<GasStand> _stands;
+	Semaphore s;
 
 	@Override
 	public void run() {
-
+		s = new Semaphore(0);
 		_stands = Arrays.asList(new GasStand("Gas1"), new GasStand("Gas2"),
 				new GasStand("Gas3"));
 
@@ -27,12 +30,24 @@ public class GasStation implements Runnable {
 		}
 
 		_cntrl.setGasStations(_stands);
-		
+
 		while (true) {
-			Car car = Car.gen();
-			Utill.pause(CAR_GEN_FREQ);
-			_cntrl.addCar(car);
+			try {
+				if (!isAuto) {
+					s.acquire();
+				}
+				Car car = Car.gen();
+				Utill.pause(CAR_GEN_FREQ);
+				_cntrl.addCar(car);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+	}
+
+	public void genSingleCar() {
+		s.release();
 	}
 
 	public void display(View view) {

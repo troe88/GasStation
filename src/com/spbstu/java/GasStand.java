@@ -6,7 +6,7 @@ import java.util.concurrent.Semaphore;
 public class GasStand implements Runnable {
 
 	private static final int CAR_SWITCH_SPEED = 200;
-	private static final int CAR_FILL_SPEED = 150;
+	private static final int CAR_FILL_SPEED = 100;
 	
 	static final Integer FUEL_LVL_ISO = 100;
 	private String _name;
@@ -37,7 +37,7 @@ public class GasStand implements Runnable {
 					while (true) {
 						semaphore.acquire();
 						while (get_fuelLvl() != GasStand.FUEL_LVL_ISO) {
-							Utill.pause(CAR_FILL_SPEED);
+							Utill.pause(20);
 							System.out.println("refuel");
 							inc_fuelLvl();
 						}

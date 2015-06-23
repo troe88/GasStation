@@ -7,7 +7,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class Controller implements Runnable {
 
-	private static final int CAR_ADD2SERV_FREQ = 1500;
+	private static final int CAR_ADD2SERV_FREQ = 1000;
 	LinkedBlockingQueue<Car> _cars;
 	View _view;
 	Random _random;
@@ -15,7 +15,7 @@ public class Controller implements Runnable {
 
 	@Override
 	public void run() {
-		_cars = new LinkedBlockingQueue<Car>();
+		_cars = new LinkedBlockingQueue<Car>(5);
 		_random = new Random();
 		while (true) {
 			Utill.pause(10);
@@ -32,7 +32,12 @@ public class Controller implements Runnable {
 	}
 	
 	public void addCar(Car car) {
-		_cars.add(car);
+		try {
+			_cars.put(car);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void dispay(View view) {
