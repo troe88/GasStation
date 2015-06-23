@@ -15,6 +15,9 @@ public class Controller implements Runnable {
 
 	@Override
 	public void run() {
+		
+		Thread.currentThread().setName("Controller");
+		
 		_cars = new LinkedBlockingQueue<Car>(5);
 		_random = new Random();
 		while (true) {

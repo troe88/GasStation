@@ -17,6 +17,9 @@ public class GasStation implements Runnable {
 
 	@Override
 	public void run() {
+		
+		Thread.currentThread().setName("GasStation");
+		
 		s = new Semaphore(0);
 		_stands = Arrays.asList(new GasStand("Gas1"), new GasStand("Gas2"),
 				new GasStand("Gas3"));
@@ -26,7 +29,7 @@ public class GasStation implements Runnable {
 
 		_servise.submit(_cntrl);
 		for (GasStand gasStand : _stands) {
-			_servise.submit(gasStand);
+			_servise.submit(gasStand, "GasStand");
 		}
 
 		_cntrl.setGasStations(_stands);

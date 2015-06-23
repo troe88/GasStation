@@ -5,6 +5,24 @@ import java.util.concurrent.Semaphore;
 
 public class GasStand implements Runnable {
 
+	private final class Gasoline implements Runnable {
+		@Override
+		public void run() {
+			try {
+				while (true) {
+					semaphore.acquire();
+					while (get_fuelLvl() != GasStand.FUEL_LVL_ISO) {
+						Utill.pause(20);
+						inc_fuelLvl();
+					}
+					semaphore2.release();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	private static final int CAR_SWITCH_SPEED = 200;
 	private static final int CAR_FILL_SPEED = 100;
 	
@@ -29,25 +47,9 @@ public class GasStand implements Runnable {
 	public void run() {
 		semaphore = new Semaphore(0);
 		semaphore2 = new Semaphore(0);
-
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					while (true) {
-						semaphore.acquire();
-						while (get_fuelLvl() != GasStand.FUEL_LVL_ISO) {
-							Utill.pause(20);
-							System.out.println("refuel");
-							inc_fuelLvl();
-						}
-						semaphore2.release();
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}).start();
+		Thread.currentThread().setName("GasStand");
+		
+		new Thread(new Gasoline(), "Gasoline 4 " + _name).start();
 
 		_cars = new LinkedBlockingQueue<Car>();
 		while (true) {
@@ -58,7 +60,6 @@ public class GasStand implements Runnable {
 					servise(_cars.peek());
 					_cars.remove();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -72,7 +73,6 @@ public class GasStand implements Runnable {
 				semaphore.release();
 				semaphore2.acquire();
 			}
-
 			dec_fuelLvl();
 			car._currentGas++;
 		}

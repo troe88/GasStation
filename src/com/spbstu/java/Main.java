@@ -30,6 +30,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.JProgressBar;
+import java.awt.Font;
 
 // Заправочная станция. Заправочная станция с самообслуживанием имеет некоторое число насосов для заправки автомобилей покупателей топливом.
 // Действует следующая система: покупатели сначала платят кассиру за топливо; кассир активирует насос чтобы доставить топливо. 
@@ -213,6 +214,7 @@ public class Main {
 				return JProgressBar.VERTICAL;
 			}
 		};
+		gas1_pb.setFont(new Font("David", Font.PLAIN, 45));
 		gas1_pb.setOrientation(SwingConstants.VERTICAL);
 		GridBagConstraints gbc_gas1_pb = new GridBagConstraints();
 		gbc_gas1_pb.fill = GridBagConstraints.BOTH;
@@ -255,6 +257,7 @@ public class Main {
 				return JProgressBar.VERTICAL;
 			}
 		};
+		gas2_pb.setFont(new Font("David", Font.PLAIN, 45));
 		gas2_pb.setOrientation(SwingConstants.VERTICAL);
 		GridBagConstraints gbc_gas2_pb = new GridBagConstraints();
 		gbc_gas2_pb.fill = GridBagConstraints.BOTH;
@@ -296,6 +299,7 @@ public class Main {
 				return JProgressBar.VERTICAL;
 			}
 		};
+		gas3_pb.setFont(new Font("David", Font.PLAIN, 45));
 		gas3_pb.setOrientation(SwingConstants.VERTICAL);
 		GridBagConstraints gbc_gas3_pb = new GridBagConstraints();
 		gbc_gas3_pb.fill = GridBagConstraints.BOTH;
